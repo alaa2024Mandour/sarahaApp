@@ -9,6 +9,13 @@ export const findOne = async ({model,filter = { },options={}} = {})=> {
     }
     return await doc.exec();
 }
+export const findById = async ({model,id,options={}} = {})=> {
+    const doc = model.findById(id)
+    if(options.populate){
+        doc.populate(options.populate)
+    }
+    return await doc.exec();
+}
 
 export const find = async ({model,filter = { },options={}} = {})=> {
     const doc = model.find(filter)
@@ -22,15 +29,18 @@ export const find = async ({model,filter = { },options={}} = {})=> {
     if(options.limit){
         doc.limit(options.limit)
     }
+    if(options.sort){
+        doc.limit(options.sort)
+    }
     return await doc.exec();
 }
 
-export const udateOne = async ({model, filter = {} , update = { },options={}} = {})=> {
-    const doc = model.udateOne(filter,update,{runValidator:true , ...options})
+export const updateOne = async ({model, filter = {} , update = { },options={}} = {})=> {
+    const doc = model.updateOne(filter,update,{runValidator:true , ...options})
     return await doc.exec();
 }
 
 export const findOneAndUpdate = async ({model, filter = {} , update = { },options={}} = {})=> {
-    const doc = model.udateOne(filter,update,{new:true,runValidator:true , ...options})
+    const doc = model.findOneAndUpdate(filter,update,{new:true,runValidator:true , ...options})
     return await doc.exec();
 }

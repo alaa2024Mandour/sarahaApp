@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
         minLength:8,
         trim:true
     },
+    phone:{
+        type : String,
+        required:true,
+    },
     gender:{
         type:String,
         required:true,
@@ -46,7 +50,9 @@ const userSchema = new mongoose.Schema({
     timestamps:true,
     strictQuery:true,
     versionKey:"versionKey",
-    optimisticConcurrency:true // to update version
+    optimisticConcurrency:true, // to update version
+    toJSON:true,
+    toObject:true
 }
 );
 
