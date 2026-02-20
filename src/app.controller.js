@@ -2,13 +2,14 @@ import express from 'express';
 import checkConnection from './DB/connectionDB.js';
 // import userModel from './DB/models/user.model.js';
 import userRouter from './modules/user.controller.js';
-import userModel from './DB/models/user.model.js';
+import cors from "cors" // to allow frontend or google service to connect my backend like sign in with google
+import { PORT } from '../config/config.service.js';
 const app = express()
-const port = 3000
+const port = PORT
 
 
 const bootstrap = () => {
-    app.use(express.json())
+    app.use( cors(), express.json()) 
     app.get('/', (req, res) => res.send('Hello World!'))
     // userModel
 

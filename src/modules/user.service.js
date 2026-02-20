@@ -5,6 +5,9 @@ import { Compare, Hash } from "../common/utils/security/hash.security.js"
 import { decrypt, encrypt } from "../common/utils/security/encrypt.security.js"
 import { v4 as uuidv4 } from 'uuid';
 import * as authService from "../common/utils/auth.service.js"
+import {OAuth2Client} from'google-auth-library';
+import { ProviderEnum } from "../common/enum/user.enum.js"
+import { SECRET_KEY } from "../../config/config.service.js"
 
 export const signUp = async (req,res) => {
         const {userName,email,password,gender,phone} = req.body
@@ -24,6 +27,55 @@ export const signUp = async (req,res) => {
         }
         throw new Error("email aready exist",{cause:400});
         // return res.status(409).json({message:"email aready exist"})
+}
+
+export const signUpWithGmail = async (req,res) => {
+    const {idToken} = req.body
+    console.log(idToken);
+    
+    const client = new OAuth2Client();
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: "746397644004-0lrjg9attdmq6bfpeo5nmcpfjij20s0m.apps.googleusercontent.com",  
+    });
+    const payload = ticket.getPayload();
+    const {email,name,picture,email_verified} = payload;
+
+    let user = await dbService.findOne({model:userModel , filter:{email}})
+    
+    if (!user){
+        user = await dbService.create({
+            model:userModel ,
+            data:{
+                email,
+                userName:name,
+                profilePic:picture,
+                confirmed:email_verified,
+                provider:ProviderEnum.google
+            }
+        })
+    }
+
+    if (user && user.provider ==  ProviderEnum.system ){
+        throw new Error("please logIn using the system form");
+    }
+
+    const access_token = authService.generateToken(
+            //payload (data will be encrypted into the token)
+            {
+                payload:{
+                id:user._id,
+                email:user.email
+            },
+
+            secret_key:SECRET_KEY,
+
+            options:{
+                expiresIn: "1day",
+            }
+        })
+        success.success_response({res,message:"logged in successfully",data:{access_token}})
+
 }
 
 export const signIn = async (req,res) => {
