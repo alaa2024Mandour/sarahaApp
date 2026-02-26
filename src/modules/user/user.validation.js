@@ -27,8 +27,10 @@ export const signUp_schema = {
     }).options({presence:"required"}), 
 }
 
-export const signIn_schema = joi.object({
+export const signIn_schema = {
+    body:joi.object({
     email:joi.string().email().required(),
     password:joi.string().required(),
 })
+}
 

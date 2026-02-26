@@ -53,7 +53,8 @@ const userSchema = new mongoose.Schema({
         default:RoleEnum.user
     },
     profilePic:String,
-    confirmed:Boolean
+    confirmed:Boolean,
+    visitsCount:Number
 },
 {
     timestamps:true,
