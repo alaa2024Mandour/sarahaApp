@@ -1,18 +1,18 @@
-import userModel from "../DB/models/user.model.js"
-import * as dbService from "../DB/db.service.js"
-import * as success from "../common/utils/successRes.js"
-import { Compare, Hash } from "../common/utils/security/hash.security.js"
-import { decrypt, encrypt } from "../common/utils/security/encrypt.security.js"
+import userModel from "../../DB/models/user.model.js"
+import * as dbService from "../../DB/db.service.js"
+import * as success from "../../common/utils/successRes.js"
+import { Compare, Hash } from "../../common/utils/security/hash.security.js"
+import { decrypt, encrypt } from "../../common/utils/security/encrypt.security.js"
 import { v4 as uuidv4 } from 'uuid';
-import * as authService from "../common/utils/auth.service.js"
+import * as authService from "../../common/utils/auth.service.js"
 import {OAuth2Client} from'google-auth-library';
-import { ProviderEnum } from "../common/enum/user.enum.js"
-import { SECRET_KEY } from "../../config/config.service.js"
+import { ProviderEnum } from "../../common/enum/user.enum.js"
+import { SECRET_KEY } from "../../../config/config.service.js"
 
 export const signUp = async (req,res) => {
-        const {userName,email,password,gender,phone} = req.body
+        const {userName,email,password,cPassowrd,gender,phone} = req.body
         if(!await dbService.findOne({model:userModel,filter:{email}})){
-            const user = await dbService.create({
+                const user = await dbService.create({
                 model:userModel,
                 data:{
                     userName,
@@ -23,7 +23,6 @@ export const signUp = async (req,res) => {
                 }
             });
             return success.success_response({res,status:201,data:user})
-            // return res.status(201).json({message:"done" , user})
         }
         throw new Error("email aready exist",{cause:400});
         // return res.status(409).json({message:"email aready exist"})

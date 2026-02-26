@@ -1,6 +1,8 @@
 import * as authService from "../utils/auth.service.js"
 import {findById} from "../../DB/db.service.js"
 import userModel from "../../DB/models/user.model.js";
+import { SECRET_KEY } from "../../../config/config.service.js";
+
 const authMiddleware = async (req, res, next) => {
     const {authorization} = req.headers
 
@@ -12,7 +14,7 @@ const authMiddleware = async (req, res, next) => {
     if(prefix !== "Bearer"){
         throw new Error("invalid token prefix");
     }
-    const decoded = authService.verifyToken({token:token,secret_key:"alaa123"})
+    const decoded = authService.verifyToken({token:token,secret_key:SECRET_KEY})
 
     if (!decoded || !decoded?.id){
         throw new Error("invalid token");
