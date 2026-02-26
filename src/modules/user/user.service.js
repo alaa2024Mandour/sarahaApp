@@ -12,6 +12,8 @@ import { SECRET_KEY } from "../../../config/config.service.js"
 export const signUp = async (req,res) => {
         const {userName,email,password,cPassowrd,gender,phone} = req.body
         if(!await dbService.findOne({model:userModel,filter:{email}})){
+                console.log(req.file);
+
                 const user = await dbService.create({
                 model:userModel,
                 data:{
@@ -25,7 +27,6 @@ export const signUp = async (req,res) => {
             return success.success_response({res,status:201,data:user})
         }
         throw new Error("email aready exist",{cause:400});
-        // return res.status(409).json({message:"email aready exist"})
 }
 
 export const signUpWithGmail = async (req,res) => {
@@ -82,11 +83,9 @@ export const signIn = async (req,res) => {
         const user = await dbService.findOne({model:userModel,filter:{email}})
         if(!user){
             throw new Error("email not exist you need to creat an acount",{cause:404});
-            // return res.status(404).json({message:"email not exist you need to creat an acount" })
         }
         if(!Compare({plainText:password,cipherText:user.password})){
             throw new Error("Invalid password",{cause:400});
-            // return res.status(400).json({message:"Invalid password"})
         }
 
         const access_token = authService.generateToken(
