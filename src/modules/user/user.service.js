@@ -21,7 +21,8 @@ export const signUp = async (req,res) => {
                     email,
                     password:Hash({plainText:password,saltRounds:12}),
                     phone:encrypt(phone),
-                    gender
+                    gender,
+                    visitsCount:0
                 }
             });
             return success.success_response({res,status:201,data:user})
@@ -51,6 +52,7 @@ export const signUpWithGmail = async (req,res) => {
                 userName:name,
                 profilePic:picture,
                 confirmed:email_verified,
+                visitsCount:0,
                 provider:ProviderEnum.google
             }
         })
@@ -109,5 +111,40 @@ export const signIn = async (req,res) => {
 }
 
 export const getProfile = async (req,res) => {
-        return success.success_response({res,message:"done",data:{...req.user._doc,phone:decrypt(req.user.phone)}})
+        const {id} = req.params
+
+        // if the id which given from the user token == visited user id so its the same person so don't increas his id and return user data only....
+        /* 
+        بس  هنا مش هتنفع علشان علشان احنا مش عايزين نجبر اليوزر
+        id انه يكون عامل اكونت عندي فا بالتالي ملهوش توكن ناخد منه ال 
+         */
+
+        // if(id == req.user.id){
+        //     return success.success_response({
+        //         res,
+        //         message:"done",
+        //         data:{
+        //             ...req.user._doc,
+        //             phone:decrypt(req.user._doc.phone)
+        //         }})
+        // }
+        const visited_user = await userModel.findByIdAndUpdate(
+                id,
+                { $inc: { visitsCount: 1 } },
+                { new: true }
+            );
+        if(visited_user){
+            return success.success_response({
+                res,
+                message:"done",
+                data:{
+                    userName:visited_user.first_name+" "+visited_user.last_name,
+                    email:visited_user.email,
+                    visitsCount:visited_user.visitsCount,
+                    phone:decrypt(visited_user.phone)
+                }})
+        }
+        throw new Error("no user found");
+        
+        
 }

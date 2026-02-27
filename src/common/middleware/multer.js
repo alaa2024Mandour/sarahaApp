@@ -1,5 +1,4 @@
 import multer from "multer";
-import path from "node:path";
 import fs from "node:fs";
 
 export const multer_local = ({folder_path="general", file_type = []}) => {

@@ -40,6 +40,7 @@ export const updateOne = async ({model, filter = {} , update = { },options={}} =
     return await doc.exec();
 }
 
+
 export const findOneAndUpdate = async ({model, filter = {} , update = { },options={}} = {})=> {
     const doc = model.findOneAndUpdate(filter,update,{new:true,runValidator:true , ...options})
     return await doc.exec();
