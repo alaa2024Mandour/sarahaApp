@@ -128,11 +128,15 @@ export const getProfile = async (req,res) => {
         //             phone:decrypt(req.user._doc.phone)
         //         }})
         // }
-        const visited_user = await userModel.findByIdAndUpdate(
-                id,
-                { $inc: { visitsCount: 1 } },
-                { new: true }
-            );
+        const visited_user = await dbService.findOneAndUpdate({
+            model:userModel,
+            filter:{_id:id},
+            update:{
+                $inc: { visitsCount: 1 } ,
+            }
+        });
+
+                
         if(visited_user){
             return success.success_response({
                 res,
