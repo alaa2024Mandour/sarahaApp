@@ -24,7 +24,11 @@ export const signUp = async (req,res) => {
         )
         
         const {userName,email,password,cPassowrd,gender,phone} = req.body
-        if(!await dbService.findOne({model:userModel,filter:{email}})){
+        if(await dbService.findOne({model:userModel,filter:{email}})){
+            await cloudinary.uploader.destroy(public_id)  // if user exist don't upload profile_pic again
+            throw new Error("email aready exist",{cause:400});
+        }
+        
                 console.log(req.file);
 
                 const user = await dbService.create({
@@ -40,8 +44,6 @@ export const signUp = async (req,res) => {
                 }
             });
             return success.success_response({res,status:201,data:user})
-        }
-        throw new Error("email aready exist",{cause:400});
 }
 
 export const signUp_with_multi_pictures = async (req,res) => {
