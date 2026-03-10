@@ -4,8 +4,6 @@ const validationMid = ({schema}) => {
         let errorsResult = []
         for (const key of Object.keys(schema)) {
             const result = schema[key].validate(req[key],{abortEarly:false})
-            
-            
             if(result.error){
                 console.log(result.error);
                 /* to handel error response to be more organized */

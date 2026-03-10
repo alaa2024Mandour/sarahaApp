@@ -52,9 +52,20 @@ const userSchema = new mongoose.Schema({
         enum:Object.values(RoleEnum),
         default:RoleEnum.user
     },
-    profilePic:String,
+    profilePic:{
+        secure_url:{
+            type:String,
+            required:true
+        },
+        public_id:{
+            type:String,
+            required:true
+        }
+    },
+    docs:[String],
     confirmed:Boolean,
-    visitsCount:Number
+    visitsCount:Number,
+    changeCredetial:Date
 },
 {
     timestamps:true,

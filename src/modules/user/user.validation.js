@@ -17,7 +17,8 @@ export const signUp_schema = {
         "any.required":"password is required"
     }),
         phone:joi.string(),
-        gender:joi.string().valid(...Object.values(GenderEnum)).default("male")
+        gender:joi.string().valid(...Object.values(GenderEnum)).default("male"),
+        // file:joi.object()
     }).options({presence:"required"}).messages({
         "any.required":"body  is required"
     }),

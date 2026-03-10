@@ -6,7 +6,6 @@ const IV_LENGTH = 16;
 export function encrypt(text) {
     if(!text){
         throw new Error("encrypted value is required");
-        
     }
     const iv = crypto.randomBytes(IV_LENGTH);
 
