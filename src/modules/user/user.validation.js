@@ -15,7 +15,7 @@ export const signUp_schema = {
         email:joi.string().email({tlds:{allow:false , deny: ['yahoo'] }}),
 
         password:joi.string()
-        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)
+        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)
         .message({
             "string.pattern.base":"Invalid passwords , must contain numbers , lower and upper letters and spetial characters "
         }),
@@ -25,7 +25,7 @@ export const signUp_schema = {
     }),
 
         phone:joi.string()
-        .pattern(/^(01|02001|\+201)[0125][0-9]{8}$/)
+        .regex(/^(01|02001|\+201)[0125][0-9]{8}$/)
         .message({
             "string.pattern.base":"Invalid phone number"
         }),
