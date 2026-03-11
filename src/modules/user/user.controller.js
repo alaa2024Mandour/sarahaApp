@@ -13,7 +13,7 @@ const userRouter = Router()
 userRouter.post(
     "/signUp",
     multer_host({file_type:MimeEnum.images})
-    .single("profile_pic"),userScervice.signUp,
+    .single("profile_pic"),
     validationMid({schema:userValidation.signUp_schema}),
     userScervice.signUp)
 

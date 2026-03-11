@@ -11,12 +11,25 @@ to validate the data from each key using the schema assigned to it.
 export const signUp_schema = {
     body:joi.object({
         userName:joi.string().min(2).max(50),
+
         email:joi.string().email({tlds:{allow:false , deny: ['yahoo'] }}),
-        password:joi.string().min(8),
+
+        password:joi.string()
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)
+        .message({
+            "string.pattern.base":"Invalid passwords , must contain numbers , lower and upper letters and spetial characters "
+        }),
+
         cPassword:joi.string().valid(joi.ref("password")).messages({
         "any.required":"password is required"
     }),
-        phone:joi.string(),
+
+        phone:joi.string()
+        .pattern(/^(01|02001|\+201)[0125][0-9]{8}$/)
+        .message({
+            "string.pattern.base":"Invalid phone number"
+        }),
+
         gender:joi.string().valid(...Object.values(GenderEnum)).default("male"),
         // file:joi.object()
     }).options({presence:"required"}).messages({

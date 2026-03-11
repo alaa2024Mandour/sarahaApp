@@ -28,9 +28,8 @@ export const signUp = async (req,res) => {
             await cloudinary.uploader.destroy(public_id)  // if user exist don't upload profile_pic again
             throw new Error("email aready exist",{cause:400});
         }
-        
                 console.log(req.file);
-
+        
                 const user = await dbService.create({
                 model:userModel,
                 data:{
