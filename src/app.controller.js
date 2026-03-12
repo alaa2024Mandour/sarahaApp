@@ -4,6 +4,7 @@ import checkConnection from './DB/connectionDB.js';
 import cors from "cors" // to allow frontend or google service to connect my backend like sign in with google
 import { PORT } from '../config/config.service.js';
 import userRouter from './modules/user/user.controller.js';
+import { redis_connection } from './DB/redis/redis.connect.js';
 const app = express()
 const port = PORT
 
@@ -17,6 +18,7 @@ const bootstrap = () => {
     app.use("/users",userRouter)
 
     checkConnection()
+    redis_connection()
     app.use("{/*demo}" , (req)=>{
         throw new Error(`Route ${req.originalUrl} not found`,{cause:404});
         // console.log(`Route ${req.originalUrl} not found`);

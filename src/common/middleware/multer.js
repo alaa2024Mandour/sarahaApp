@@ -10,7 +10,7 @@ export const multer_local = ({folder_path="general", file_type = []}) => {
 
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      // console.log("filter",file);
+      console.log("filter",file);
       cb(null, full_path);
     },
     filename: function (req, file, cb) {
@@ -36,7 +36,6 @@ export const multer_local = ({folder_path="general", file_type = []}) => {
 
 export const multer_host = ({file_type = []}) => {
   const storage = multer.diskStorage({});
-
   function fileFilter (req, file, cb) {
     // console.log(file);
     
@@ -47,6 +46,5 @@ export const multer_host = ({file_type = []}) => {
 }
 
   const upload = multer({ storage , fileFilter});
-
   return upload;
 };

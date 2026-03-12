@@ -1,5 +1,7 @@
 import joi from "joi"
 import { GenderEnum } from "../../common/enum/user.enum.js"
+import { general_rules } from "../../common/utils/general.rules.js"
+
 /*
 If you need to receive data from query, body, headers, params, etc.,
 you can build an object and inject into it keys like "body", "query", etc.,
@@ -10,31 +12,28 @@ to validate the data from each key using the schema assigned to it.
 */
 export const signUp_schema = {
     body:joi.object({
-        userName:joi.string().min(2).max(50),
-
-        email:joi.string().email({tlds:{allow:false , deny: ['yahoo'] }}),
-
-        password:joi.string()
-        .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/)
-        .message({
-            "string.pattern.base":"Invalid passwords , must contain numbers , lower and upper letters and spetial characters "
-        }),
-
-        cPassword:joi.string().valid(joi.ref("password")).messages({
-        "any.required":"password is required"
-    }),
-
-        phone:joi.string()
-        .regex(/^(01|02001|\+201)[0125][0-9]{8}$/)
-        .message({
-            "string.pattern.base":"Invalid phone number"
-        }),
-
-        gender:joi.string().valid(...Object.values(GenderEnum)).default("male"),
-        // file:joi.object()
+        userName:general_rules.userName,
+        email:general_rules.email,
+        password:general_rules.password,
+        cPassword:general_rules.cPassword,
+        phone:general_rules.phone,
+        gender:general_rules.gender
     }).options({presence:"required"}).messages({
         "any.required":"body  is required"
     }),
+
+    file:general_rules.file, 
+
+    // files:joi.array().max(2).items(general_rules.file).required(),  // if you recive multibil files from the same field
+
+    // files:joi.object({   // if you recive multibel files from the multi field
+    //     cover_pic:joi.array().max(2).items(general_rules.file).required(),
+
+    //     profile_pic:joi.array().max(1).items(general_rules.file).required()
+        
+    // }).required().messages({
+    //     'any.required':"file is required"
+    // }),
     
     query:joi.object({
         flag:joi.boolean().truthy("yes" , "y" , "1").falsy("no","n","0")
@@ -43,8 +42,8 @@ export const signUp_schema = {
 
 export const signIn_schema = {
     body:joi.object({
-    email:joi.string().email().required(),
-    password:joi.string().required(),
+    email:general_rules.email.required(),
+    password:general_rules.password.required(),
 })
 }
 

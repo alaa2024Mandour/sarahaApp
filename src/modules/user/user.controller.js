@@ -12,7 +12,7 @@ const userRouter = Router()
 
 userRouter.post(
     "/signUp",
-    multer_host({file_type:MimeEnum.images})
+    multer_host({file_type:MimeEnum.images})  //multer middleware before validation because multer pars the data from type form data to json not express.json()
     .single("profile_pic"),
     validationMid({schema:userValidation.signUp_schema}),
     userScervice.signUp)
@@ -21,8 +21,10 @@ userRouter.post(
 // test sinup with multi pictures
 userRouter.post(
     "/signUp/pics",
-    multer_local({folder_path:"users",file_type:MimeEnum.images})
-    .array("profile_pic",2),userScervice.signUp_with_multi_pictures)
+    multer_host({file_type:MimeEnum.images})
+    .array("profile_pic",2),
+    validationMid({schema:userValidation.signUp_schema}),
+    userScervice.signUp_with_multi_pictures)
 
 // test sinup with multi fields
 userRouter.post(
@@ -30,12 +32,9 @@ userRouter.post(
     multer_local({folder_path:"users",file_type:[...MimeEnum.images,...MimeEnum.docs]})
     .fields([
     {name:"profile_pic", maxCount: 1},
-    {name:"docs",maxCount: 2},
+    {name:"cover_pic",maxCount: 2},
 ]),
-(req,res,next)=>{
-    console.log("After multer");
-    next();
-},
+validationMid({schema:userValidation.signUp_schema}),
 userScervice.signUp_with_deffirent_feilds)
 
 

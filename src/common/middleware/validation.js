@@ -1,4 +1,3 @@
-
 const validationMid = ({schema}) => {
     return (req,res,next)=> {
         let errorsResult = []
