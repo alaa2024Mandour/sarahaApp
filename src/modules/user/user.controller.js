@@ -40,7 +40,9 @@ userScervice.signUp_with_deffirent_feilds)
 
 userRouter.post("/signup/gmail",userScervice.signUpWithGmail)
 userRouter.post("/signIn",validationMid({schema:userValidation.signIn_schema}),userScervice.signIn)
+userRouter.get("/",authMiddleware,authorization([RoleEnum.user]),userScervice.getMyProfile)
 userRouter.get("/:id",authMiddleware,authorization([RoleEnum.user]),userScervice.getProfile)
+userRouter.post("/refreshToken",userScervice.refreshToken)
 // userRouter.post("/logOut",authMiddleware,userScervice.logOut)
 
 export default userRouter

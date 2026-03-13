@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
     }
 
     const [prefix , token] = authorization.split(" ");
-    if(prefix !== "Bearer"){
+    if(prefix !== configService.PREFIX){
         throw new Error("invalid token prefix");
     }
     const decoded = authService.verifyToken({token:token,secret_key:configService.ACCESS_SECRET_KEY})

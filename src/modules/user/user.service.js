@@ -9,6 +9,7 @@ import {OAuth2Client} from'google-auth-library';
 import { ProviderEnum } from "../../common/enum/user.enum.js"
 import * as configService from "../../../config/config.service.js"
 import cloudinary from "../../common/utils/cloudinary.js"
+import { log } from "node:console"
 
 export const signUp = async (req,res) => {
         console.log(req.file);
@@ -170,9 +171,9 @@ export const signIn = async (req,res) => {
                 id:user._id,
                 email:user.email
             },
-            secret_key:"configService.ACCESS_SECRET_KEY",
+            secret_key:configService.ACCESS_SECRET_KEY,
             options:{
-                expiresIn: "1h", // this token will be expired after 1 hour
+                expiresIn: "1m", // this token will be expired after 1 hour
                 // noTimestamp:true, // remove initiate time the time token generate in it
                 //notBefore:60*60 ,// this token not be valid befor 1 hour
                 jwtid:uuidv4()  // to generate random id for the token 
@@ -186,7 +187,7 @@ export const signIn = async (req,res) => {
             },
             secret_key:configService.REFRESH_SECRET_KEY,
             options:{
-                expiresIn: "1y",
+                expiresIn: "30d",
             }
         })
         success.success_response({res,message:"logged in successfully",data:{access_token, refresh_token}})
@@ -196,20 +197,20 @@ export const refreshToken = async (req,res) => {
         const {authorization} = req.headers
         
             if(!authorization){
-                throw new Error("token is required from the headers");
+                throw new Error("refresh token is required from the headers");
             }
         
             const [prefix , token] = authorization.split(" ");
-            if(prefix !== "Bearer"){
+            if(prefix !== configService.PREFIX){
                 throw new Error("invalid token prefix");
             }
             const decoded = authService.verifyToken({token:token,secret_key:configService.REFRESH_SECRET_KEY})
 
             if (!decoded || !decoded?.id){
-                throw new Error("invalid token");
+                throw new Error("invalid refresh token");
             }
 
-            const user = await findById({
+            const user = await dbService.findById({
                 model:userModel,
                 id:decoded.id
             })
@@ -222,10 +223,18 @@ export const refreshToken = async (req,res) => {
             },
             secret_key:configService.ACCESS_SECRET_KEY,
             options:{
-                expiresIn: "1h",
+                expiresIn: "1m",
             }
         })
         success.success_response({res,data:{access_token}})
+}
+
+export const getMyProfile = async (req,res) => {
+        const user = await dbService.findById({
+            model:userModel,
+            id:req.user.id
+        })
+        return success.success_response({res,data:user})
 }
 
 export const getProfile = async (req,res) => {
