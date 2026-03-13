@@ -292,6 +292,26 @@ export const shareProfile = async (req,res) => {
     return success.success_response({res,data:user})
 }
 
+export const updateProfile = async(req,res) => {
+    let {first_name,last_name,gender,phone} = req.body
+
+    if(phone){
+        phone = encrypt(phone)
+    }
+
+    const user = await dbService.findOneAndUpdate({
+        model:userModel,
+        filter:{id:req.user.id},
+        update:{first_name,last_name,gender,phone}
+    })
+    
+    if(!user){
+        throw new Error("user not exist",{cause:401});
+        
+    }
+    return success.success_response({res,data:user})
+}
+
 // export const logOut = async (req,res) => {
 //     req.user.changeCredetial = new Date()
 

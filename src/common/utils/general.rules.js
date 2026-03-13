@@ -4,6 +4,10 @@ import { Types } from "mongoose";
 export const general_rules = {
     userName: joi.string().min(2).max(50),
 
+    first_name: joi.string().min(2).max(50),
+
+    last_name: joi.string().min(2).max(50),
+
     email: joi.string().email({ tlds: { allow: false, deny: ["yahoo"] } }),
 
     password: joi

@@ -42,14 +42,23 @@ export const signUp_schema = {
 
 export const signIn_schema = {
     body:joi.object({
-    email:general_rules.email.required(),
-    password:general_rules.password.required(),
-})
+        email:general_rules.email.required(),
+        password:general_rules.password.required(),
+    })
 }
 
 export const shareProfile_schema = {
     params:joi.object({
-    id:general_rules.id.required(),
-})
+        id:general_rules.id.required(),
+    })
+}
+
+export const updateProfile_schema = {
+    params:joi.object({
+        first_name:general_rules.first_name,
+        last_name:general_rules.last_name,
+        phone:general_rules.phone,
+        gender:general_rules.gender
+    })
 }
 
