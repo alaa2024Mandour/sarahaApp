@@ -47,3 +47,9 @@ export const signIn_schema = {
 })
 }
 
+export const shareProfile_schema = {
+    params:joi.object({
+    id:general_rules.id.required(),
+})
+}
+

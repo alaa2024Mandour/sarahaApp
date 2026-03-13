@@ -43,6 +43,7 @@ userRouter.post("/signIn",validationMid({schema:userValidation.signIn_schema}),u
 userRouter.get("/",authMiddleware,authorization([RoleEnum.user]),userScervice.getMyProfile)
 userRouter.get("/:id",authMiddleware,authorization([RoleEnum.user]),userScervice.getProfile)
 userRouter.post("/refreshToken",userScervice.refreshToken)
+userRouter.get("/shareProfile/:id",validationMid({schema:userValidation.shareProfile_schema}),userScervice.shareProfile)
 // userRouter.post("/logOut",authMiddleware,userScervice.logOut)
 
 export default userRouter

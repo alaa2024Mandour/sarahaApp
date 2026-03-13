@@ -1,5 +1,6 @@
 import joi from "joi"
 import { GenderEnum } from "../enum/user.enum.js";
+import { Types } from "mongoose";
 export const general_rules = {
     userName: joi.string().min(2).max(50),
 
@@ -28,6 +29,11 @@ export const general_rules = {
         .string()
         .valid(...Object.values(GenderEnum))
         .default("male"),
+
+    id:joi.string().custom((value,helper)=>{
+        const isValid = Types.ObjectId.isValid(value)
+        return isValid ? value : helper.message("invalid id structure")
+    }),
 
     file: joi
         .object({

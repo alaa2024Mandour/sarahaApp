@@ -9,7 +9,6 @@ import {OAuth2Client} from'google-auth-library';
 import { ProviderEnum } from "../../common/enum/user.enum.js"
 import * as configService from "../../../config/config.service.js"
 import cloudinary from "../../common/utils/cloudinary.js"
-import { log } from "node:console"
 
 export const signUp = async (req,res) => {
         console.log(req.file);
@@ -274,6 +273,23 @@ export const getProfile = async (req,res) => {
         throw new Error("no user found");
         
         
+}
+
+export const shareProfile = async (req,res) => {
+    const {id} = req.params;
+    const user =  await dbService.findById({
+        model:userModel,
+        id,
+        select:"-password"
+    })
+
+    if(!user){
+        throw new Error("user not exist",{cause:401});
+    }
+
+    user.phone = decrypt(user.phone)
+
+    return success.success_response({res,data:user})
 }
 
 // export const logOut = async (req,res) => {
