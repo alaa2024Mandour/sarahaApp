@@ -10,6 +10,7 @@ import { ProviderEnum } from "../../common/enum/user.enum.js"
 import * as configService from "../../../config/config.service.js"
 import cloudinary from "../../common/utils/cloudinary.js"
 
+
 export const signUp = async (req,res) => {
         console.log(req.file);
         
@@ -310,6 +311,22 @@ export const updateProfile = async(req,res) => {
         
     }
     return success.success_response({res,data:user})
+}
+
+export const updatePassword = async(req,res) => {
+    let {oldPassword,newPassword} = req.body;
+
+    if(!Compare({plainText:oldPassword,cipherText:req.user.password})){
+        throw new Error("invalid old password");
+    }
+
+    const hashedNewPassword = Hash({plainText:newPassword})
+
+    req.user.password = hashedNewPassword
+
+    await req.user.save()
+
+    return success.success_response({res})
 }
 
 // export const logOut = async (req,res) => {

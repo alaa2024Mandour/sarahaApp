@@ -62,3 +62,13 @@ export const updateProfile_schema = {
     })
 }
 
+export const updatePassword_schema = {
+    params:joi.object({
+        oldPassword:general_rules.password,
+        newPassword:general_rules.password,
+        cPassword:joi.string().valid(joi.ref("password")).messages({
+                "any.required": "password is required",
+            }),
+    })
+}
+
