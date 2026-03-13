@@ -230,11 +230,7 @@ export const refreshToken = async (req,res) => {
 }
 
 export const getMyProfile = async (req,res) => {
-        const user = await dbService.findById({
-            model:userModel,
-            id:req.user.id
-        })
-        return success.success_response({res,data:user})
+        return success.success_response({res,data:req.user})
 }
 
 export const getProfile = async (req,res) => {
