@@ -1,5 +1,4 @@
 import joi from "joi"
-import { GenderEnum } from "../../common/enum/user.enum.js"
 import { general_rules } from "../../common/utils/general.rules.js"
 
 /*

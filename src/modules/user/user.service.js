@@ -9,6 +9,7 @@ import {OAuth2Client} from'google-auth-library';
 import { ProviderEnum } from "../../common/enum/user.enum.js"
 import * as configService from "../../../config/config.service.js"
 import cloudinary from "../../common/utils/cloudinary.js"
+import revokTokenModel from "../../DB/models/revokToken.model.js"
 
 
 export const signUp = async (req,res) => {
@@ -164,6 +165,9 @@ export const signIn = async (req,res) => {
         if(!Compare({plainText:password,cipherText:user.password})){
             throw new Error("Invalid password",{cause:400});
         }
+
+        const randomID = uuidv4()  // to generate random id for the token 
+
         const access_token = authService.generateToken(
             //payload (data will be encrypted into the token)
             {
@@ -173,10 +177,10 @@ export const signIn = async (req,res) => {
             },
             secret_key:configService.ACCESS_SECRET_KEY,
             options:{
-                expiresIn: "1m", // this token will be expired after 1 hour
+                expiresIn: "15m", // this token will be expired after 1 hour
                 // noTimestamp:true, // remove initiate time the time token generate in it
                 //notBefore:60*60 ,// this token not be valid befor 1 hour
-                jwtid:uuidv4()  // to generate random id for the token 
+                jwtid: randomID // make the id for the access token like the refresh token to expire theme when the user logout
             }
         })
         const refresh_token = authService.generateToken(
@@ -188,6 +192,7 @@ export const signIn = async (req,res) => {
             secret_key:configService.REFRESH_SECRET_KEY,
             options:{
                 expiresIn: "30d",
+                jwtid: randomID // make the id for the access token like the refresh token to expire theme when the user logout
             }
         })
         success.success_response({res,message:"logged in successfully",data:{access_token, refresh_token}})
@@ -214,7 +219,7 @@ export const refreshToken = async (req,res) => {
                 model:userModel,
                 id:decoded.id
             })
-        
+
         const access_token = authService.generateToken(
             {
                 payload:{
@@ -223,7 +228,8 @@ export const refreshToken = async (req,res) => {
             },
             secret_key:configService.ACCESS_SECRET_KEY,
             options:{
-                expiresIn: "1m",
+                expiresIn: "15m",
+                jwtid:decoded.jti // make the id for the access token like the refresh token to expire theme when the user logout
             }
         })
         success.success_response({res,data:{access_token}})
@@ -329,9 +335,26 @@ export const updatePassword = async(req,res) => {
     return success.success_response({res})
 }
 
-// export const logOut = async (req,res) => {
-//     req.user.changeCredetial = new Date()
+export const logOut = async (req,res) => {  
+    const {flag} = req.query
 
-//     await req.user.save()
-// }
+    if(flag == "all"){ //logout from all devices
+        req.user.changeCredetial = new Date()
+        await req.user.save()
+        await dbService.deleteMany({model:revokTokenModel,filter:{userId:req.user.id}})
+        return success.success_response({res})
+    }
+    else{ //logout from one device
+        await dbService.create({  // when logout called create new doc in db hold this id info 
+            model:revokTokenModel,
+            data:{
+                tokenId:req.decoded.jti,  
+                userId:req.user.id,
+                expireAt:new Date(req.decoded.exp * 1000) //*1000 to convert from millisconds to seconds
+            }
+        })
+    }
+
+    success.success_response({res})
+}
 

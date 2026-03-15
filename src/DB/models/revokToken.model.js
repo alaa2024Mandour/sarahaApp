@@ -22,7 +22,7 @@ const revokTokenSchema = new mongoose.Schema({
 }
 );
 
-revokTokenSchema.index("expireAt",{expireAfterSeconds:0})
+revokTokenSchema.index({expireAt:1},{expireAfterSeconds:0})
 
 const revokTokenModel = mongoose.models.revokToken || mongoose.model("revokToken",revokTokenSchema);
 

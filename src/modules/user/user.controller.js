@@ -46,6 +46,6 @@ userRouter.post("/refreshToken",userScervice.refreshToken)
 userRouter.get("/shareProfile/:id",validationMid({schema:userValidation.shareProfile_schema}),userScervice.shareProfile)
 userRouter.patch("/updateProfile",validationMid({schema:userValidation.updateProfile_schema}),authMiddleware,userScervice.updateProfile)
 userRouter.patch("/updatePassword",validationMid({schema:userValidation.updatePassword_schema}),authMiddleware,userScervice.updatePassword)
-// userRouter.post("/logOut",authMiddleware,userScervice.logOut)
+userRouter.post("/logOut",authMiddleware,userScervice.logOut)
 
 export default userRouter

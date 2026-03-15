@@ -1,7 +1,8 @@
 import * as authService from "../utils/auth.service.js"
-import {findById} from "../../DB/db.service.js"
+import * as dbService from "../../DB/db.service.js"
 import userModel from "../../DB/models/user.model.js";
 import * as configService from "../../../config/config.service.js";
+import revokTokenModel from "../../DB/models/revokToken.model.js";
 
 const authMiddleware = async (req, res, next) => {
     const {authorization} = req.headers
@@ -20,7 +21,7 @@ const authMiddleware = async (req, res, next) => {
         throw new Error("invalid token");
     }
 
-    const user = await findById({
+    const user = await dbService.findById({
         model:userModel,
         id:decoded.id
     })
@@ -29,12 +30,21 @@ const authMiddleware = async (req, res, next) => {
         throw new Error("invalid token");
     }
 
-    const logOutTime = user?.changeCredetial?.getTim();
-    const logInTime = decoded.jti*1000;
+    const logOutTime = user?.changeCredetial?.getTime();
+    const logInTime = decoded.iat*1000;
 
     if(logOutTime > logInTime){
         throw new Error("invalid token");
     }
+
+    const revokToken = await dbService.findOne({
+            model:revokTokenModel,
+            filter:{tokenId:decoded.jti}  // if tokenId exist so you loged out
+        })
+                
+    if(revokToken){
+            throw new Error("invalid revoked token");
+        }
 
     req.user = user
     req.decoded = decoded
