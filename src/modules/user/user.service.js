@@ -220,6 +220,15 @@ export const refreshToken = async (req,res) => {
                 id:decoded.id
             })
 
+            const logOutTime = user?.changeCredetial?.getTime();
+            const logInTime = decoded.iat*1000;
+
+            if(logOutTime > logInTime){
+                throw new Error("expired refresh token");
+            }
+
+            
+
         const access_token = authService.generateToken(
             {
                 payload:{
@@ -354,7 +363,6 @@ export const logOut = async (req,res) => {
             }
         })
     }
-
     success.success_response({res})
 }
 
