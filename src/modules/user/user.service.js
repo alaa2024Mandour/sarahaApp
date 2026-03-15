@@ -347,19 +347,25 @@ export const updatePassword = async(req,res) => {
 export const logOut = async (req,res) => {  
     const {flag} = req.query
 
+    const refreshToken = req.headers.refreshtoken
+
+    const [prefix, token] = refreshToken.split(" ")
+
+    const decoded = authService.verifyToken({token:token,secret_key:configService.REFRESH_SECRET_KEY})
+
     if(flag == "all"){ //logout from all devices
         req.user.changeCredetial = new Date()
         await req.user.save()
-        await dbService.deleteMany({model:revokTokenModel,filter:{userId:req.user.id}})
+        // await dbService.deleteMany({model:revokTokenModel,filter:{userId:req.user.id}})
         return success.success_response({res})
     }
     else{ //logout from one device
         await dbService.create({  // when logout called create new doc in db hold this id info 
             model:revokTokenModel,
             data:{
-                tokenId:req.decoded.jti,  
+                tokenId:decoded.jti,  
                 userId:req.user.id,
-                expireAt:new Date(req.decoded.exp * 1000) //*1000 to convert from millisconds to seconds
+                expireAt:new Date(decoded.exp * 1000) //*1000 to convert from millisconds to seconds
             }
         })
     }
