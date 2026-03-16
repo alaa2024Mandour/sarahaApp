@@ -3,6 +3,8 @@ import * as dbService from "../../DB/db.service.js"
 import userModel from "../../DB/models/user.model.js";
 import * as configService from "../../../config/config.service.js";
 import revokTokenModel from "../../DB/models/revokToken.model.js";
+import * as redisService from "../../DB/redis/redis.service.js";
+import { revokedToken_key } from "../../modules/user/user.service.js";
 
 const authMiddleware = async (req, res, next) => {
     const {authorization} = req.headers
@@ -37,11 +39,14 @@ const authMiddleware = async (req, res, next) => {
         throw new Error("invalid token");
     }
 
-    const revokToken = await dbService.findOne({
-            model:revokTokenModel,
-            filter:{tokenId:decoded.jti}  // if tokenId exist so you loged out
-        })
+    // const revokToken = await dbService.findOne({
+    //         model:revokTokenModel,
+    //         filter:{tokenId:decoded.jti}  // if tokenId exist so you loged out
+    //     })
                 
+
+    const revokToken = await redisService.get(revokedToken_key({userId:user.id,jti:decoded.jti}));
+
     if(revokToken){
             throw new Error("invalid revoked token");
         }

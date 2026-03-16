@@ -1,4 +1,4 @@
-import { redis_client } from "./redis.connect";
+import { redis_client } from "./redis.connect.js";
 
 export const set = async({key,value,ttl})=>{
     try {

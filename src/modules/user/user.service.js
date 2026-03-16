@@ -10,7 +10,19 @@ import { ProviderEnum } from "../../common/enum/user.enum.js"
 import * as configService from "../../../config/config.service.js"
 import cloudinary from "../../common/utils/cloudinary.js"
 import revokTokenModel from "../../DB/models/revokToken.model.js"
+import * as redisService from "../../DB/redis/redis.service.js";
 
+export const revokedToken_key = ({userId,jti}) => {
+    return `revokedToken::${userId}::${jti}`
+}
+
+export const getUser_revokedKeys = ({userId}) => {
+    return `revokedToken::${userId}`
+}
+
+export const profile_key = ({userId}) => {
+    return `profile::${userId}`
+}
 
 export const signUp = async (req,res) => {
         console.log(req.file);
@@ -245,6 +257,18 @@ export const refreshToken = async (req,res) => {
 }
 
 export const getMyProfile = async (req,res) => {
+        const key = profile_key({userId:req.user.id})
+        const user_exist = await redisService.get(key);
+        if(user_exist){
+            console.log("from cach");
+            return success.success_response({res,data:user_exist})
+        }
+        await redisService.set({
+            key:key,
+            value:req.user,
+            ttl:60
+        })
+
         return success.success_response({res,data:req.user})
 }
 
@@ -325,6 +349,7 @@ export const updateProfile = async(req,res) => {
         throw new Error("user not exist",{cause:401});
         
     }
+    await redisService.del(profile_key({userId:req.user.id}))  // after update remove caching to get the updated data agein from db
     return success.success_response({res,data:user})
 }
 
@@ -356,18 +381,26 @@ export const logOut = async (req,res) => {
     if(flag == "all"){ //logout from all devices
         req.user.changeCredetial = new Date()
         await req.user.save()
-        // await dbService.deleteMany({model:revokTokenModel,filter:{userId:req.user.id}})
+        // await dbService.deleteMany({model:revokTokenModel,filter:{userId:req.user.id}}) //mogooDB
+        await redisService.del(await redisService.keys(getUser_revokedKeys({userId:req.user.id}))) //redis
         return success.success_response({res})
     }
     else{ //logout from one device
-        await dbService.create({  // when logout called create new doc in db hold this id info 
-            model:revokTokenModel,
-            data:{
-                tokenId:decoded.jti,  
-                userId:req.user.id,
-                expireAt:new Date(decoded.exp * 1000) //*1000 to convert from millisconds to seconds
-            }
+        /* ---------- We will cache revoked tokens using Redis ---------- */
+        await redisService.set({
+            key:revokedToken_key({userId:req.user.id,jti:decoded.jti}),
+            value:decoded.jti,
+            ttl:decoded.exp - Math.floor(Date.now()/1000)
         })
+        /* ---------- We will not use the revokeToken model because it may cause heavy load on the database ---------- */
+        // await dbService.create({  // when logout called create new doc in db hold this id info 
+        //     model:revokTokenModel,
+        //     data:{
+        //         tokenId:decoded.jti,  
+        //         userId:req.user.id,
+        //         expireAt:new Date(decoded.exp * 1000) //*1000 to convert from millisconds to seconds
+        //     }
+        // })
     }
     success.success_response({res})
 }
