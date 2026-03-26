@@ -5,6 +5,7 @@ import cors from "cors" // to allow frontend or google service to connect my bac
 import { PORT } from '../config/config.service.js';
 import userRouter from './modules/user/user.controller.js';
 import { redis_connection } from './DB/redis/redis.connect.js';
+import messageRouter from './modules/message/message.controller.js';
 const app = express()
 const port = PORT
 
@@ -16,6 +17,7 @@ const bootstrap = () => {
     // userModel
 
     app.use("/users",userRouter)
+    app.use("/messages",messageRouter)
 
     checkConnection()
     redis_connection()
