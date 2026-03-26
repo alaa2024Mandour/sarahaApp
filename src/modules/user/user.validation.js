@@ -71,3 +71,30 @@ export const updatePassword_schema = {
     })
 }
 
+export const confirmEmial_schema = {
+    body:joi.object({
+        email:general_rules.email.required(),
+        code:joi.string().regex(/^\d{6}$/).required()
+    }).required()
+}
+
+export const resendEmial_schema = {
+    body:joi.object({
+        email:general_rules.email.required(),
+    }).required()
+}
+
+export const forgotPassword_schema = {
+    body:joi.object({
+        email:general_rules.email.required(),
+    }).required()
+}
+
+export const resetPassword_schema = {
+    body:joi.object({
+        email:general_rules.email.required(),
+        code:joi.string().regex(/^\d{6}$/).required(),
+        password:general_rules.password.required(),
+    }).required()
+}
+

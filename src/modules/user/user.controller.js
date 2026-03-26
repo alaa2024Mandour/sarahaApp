@@ -39,13 +39,29 @@ userScervice.signUp_with_deffirent_feilds)
 
 
 userRouter.post("/signup/gmail",userScervice.signUpWithGmail)
+
 userRouter.post("/signIn",validationMid({schema:userValidation.signIn_schema}),userScervice.signIn)
+
 userRouter.get("/",authMiddleware,authorization([RoleEnum.user]),userScervice.getMyProfile)
+
 userRouter.get("/:id",authMiddleware,authorization([RoleEnum.user]),userScervice.getProfile)
+
 userRouter.post("/refreshToken",userScervice.refreshToken)
+
 userRouter.get("/shareProfile/:id",validationMid({schema:userValidation.shareProfile_schema}),userScervice.shareProfile)
+
+userRouter.post("/forgotPassword",validationMid({schema:userValidation.forgotPassword_schema}),userScervice.forgotPassword)
+
+userRouter.patch("/resetPassword",validationMid({schema:userValidation.resetPassword_schema}),userScervice.resetPassword)
+
 userRouter.patch("/updateProfile",validationMid({schema:userValidation.updateProfile_schema}),authMiddleware,userScervice.updateProfile)
+
 userRouter.patch("/updatePassword",validationMid({schema:userValidation.updatePassword_schema}),authMiddleware,userScervice.updatePassword)
+
 userRouter.post("/logOut",authMiddleware,userScervice.logOut)
+
+userRouter.post("/confirm",validationMid({schema:userValidation.confirmEmial_schema}),userScervice.confirmEmail)
+
+userRouter.post("/resend",validationMid({schema:userValidation.resendEmial_schema}),userScervice.resendEmail)
 
 export default userRouter

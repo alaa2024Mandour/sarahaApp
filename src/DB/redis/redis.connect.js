@@ -9,5 +9,5 @@ export const redis_client = createClient({
 export const redis_connection = async()=>{
     await redis_client.connect()
     .then(()=>console.log("Redis connected successfully")) 
-    .catch((error)=>console.log("Redis connection faild"))
+    .catch((error)=>console.log({msg:"Redis connection faild",error}))
 }

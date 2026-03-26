@@ -62,6 +62,7 @@ export const del = async(key)=>{
         
     }
 }
+
 export const keys = async(pattern)=>{
     try {
         return await redis_client.keys(`${pattern}*`)
@@ -72,4 +73,11 @@ export const keys = async(pattern)=>{
 }
 
 
-
+export const incr = async(key)=>{
+    try {
+        return await redis_client.incr(key)
+    } catch (error) {
+        console.log({error,mes:"error on increament cash operation"});
+        
+    }
+}

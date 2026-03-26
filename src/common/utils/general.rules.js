@@ -50,8 +50,8 @@ export const general_rules = {
             path: joi.string(),
             size: joi.number(),
         })
-        .required()
-        .messages({
-            "any.required": "file is required",
-        }),
+        // .required()
+        // .messages({
+        //     "any.required": "file is required",
+        // }),
 };

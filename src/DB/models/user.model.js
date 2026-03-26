@@ -55,11 +55,9 @@ const userSchema = new mongoose.Schema({
     profilePic:{
         secure_url:{
             type:String,
-            required:true
         },
         public_id:{
             type:String,
-            required:true
         }
     },
     docs:[String],

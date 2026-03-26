@@ -1,4 +1,5 @@
 import bootstrap from "./app.controller.js";
+import { sendEmail } from "./common/utils/email/send.email.js";
 
 bootstrap();
 
@@ -8,3 +9,9 @@ bootstrap();
 // console.log(".........................");
 
 // console.log(password.match(password_regx));
+
+// sendEmail({
+//     to:"alaayassercv19@gmail.com",
+//     subject:"saraha app confirmation email",
+//     html:"<p> hello user <p>"
+// })
