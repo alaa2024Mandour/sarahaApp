@@ -365,6 +365,14 @@ export const signUpWithGmail = async (req, res) => {
 
 export const signIn = async (req, res) => {
     const { email, password } = req.body;
+    const counterKey = `user::${email}`
+    const banKey = `user::baned::${email}`
+
+    if(await redisService.get(banKey)){
+        const banTtl = await redisService.ttl(banKey)/60
+        throw new Error(`you reached the max tries to logIn , try after ${Math.ceil(banTtl)} minuts`);
+    }
+
     const user = await dbService.findOne({ 
         model: userModel, 
         filter: { 
@@ -377,8 +385,27 @@ export const signIn = async (req, res) => {
         });
     }
     if (!Compare({ plainText: password, cipherText: user.password })) {
+        if(await redisService.get(counterKey)){
+            await redisService.incr(counterKey)
+            if(await redisService.get(counterKey) == 5){
+                await redisService.set({
+                    key:banKey,
+                    value:true,
+                    ttl:5*60 //5 minutes
+                })
+                await redisService.del(counterKey)
+            }
+        }
+        else{
+            await redisService.set({
+            key:counterKey,
+            value:1,
+            })
+        }
         throw new Error("Invalid password", { cause: 400 });
     }
+
+    await redisService.del(counterKey)
 
     const randomID = uuidv4(); // to generate random id for the token
 
