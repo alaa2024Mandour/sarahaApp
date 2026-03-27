@@ -6,6 +6,8 @@ import { PORT } from '../config/config.service.js';
 import userRouter from './modules/user/user.controller.js';
 import { redis_connection } from './DB/redis/redis.connect.js';
 import messageRouter from './modules/message/message.controller.js';
+import "../src/modules/user/user.cron.js"
+
 const app = express()
 const port = PORT
 
