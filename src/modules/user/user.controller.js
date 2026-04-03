@@ -8,7 +8,10 @@ import * as userValidation from "./user.validation.js";
 import { multer_host, multer_local } from "../../common/middleware/multer.js";
 import { MimeEnum } from "../../common/enum/multer.enum.js";
 
-const userRouter = Router()
+const userRouter = Router({
+    caseSensitive:true,
+    strict:true
+})
 
 userRouter.post(
     "/signUp",

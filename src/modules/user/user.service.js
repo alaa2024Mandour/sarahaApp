@@ -80,11 +80,8 @@ const sendEmailOTP = async ({email,subject}) => {
 }
 
 export const signUp = async (req, res) => {
-    console.log("in the sign in func");
-    // console.log(req.file);
 
     if(req.file){
-    console.log("before sending image to cloudinary");
         const { secure_url, public_id } = await cloudinary.uploader.upload(
             req.file.path,
             {
@@ -98,13 +95,11 @@ export const signUp = async (req, res) => {
     
 
     const { userName, email, password, cPassowrd, gender, phone } = req.body;
-    console.log("Before finging user");
     if (await dbService.findOne({ model: userModel, filter: { email } })) {
         // await cloudinary.uploader.destroy(public_id); // if user exist don't upload profile_pic again
         throw new Error("email aready exist", { cause: 400 });
     }
 
-    console.log("Before creating user");
     
     const user = await dbService.create({
         model: userModel,
@@ -119,7 +114,7 @@ export const signUp = async (req, res) => {
         },
     });
 
-    console.log("Before send email to user");
+
     const OTP = await generateOTP();
     eventEmitter.emit(EmailEnum.confirmeEmail,async()=>{
         await sendEmail({
@@ -252,7 +247,6 @@ export const resetPassword = async (req, res) => {
 export const signUp_with_multi_pictures = async (req, res) => {
     const { userName, email, password, cPassowrd, gender, phone } = req.body;
     if (!(await dbService.findOne({ model: userModel, filter: { email } }))) {
-        console.log(req.files);
 
         const profilePics = [];
 
@@ -280,14 +274,10 @@ export const signUp_with_multi_pictures = async (req, res) => {
 export const signUp_with_deffirent_feilds = async (req, res) => {
     const { userName, email, password, cPassowrd, gender, phone } = req.body;
     if (!(await dbService.findOne({ model: userModel, filter: { email } }))) {
-        console.log("-------------------");
 
-        // console.log(req.files);
         const docs = [];
 
         for (const element of req.files.docs) {
-            // console.log(element.path);
-
             docs.push(element.path);
         }
 
@@ -311,7 +301,6 @@ export const signUp_with_deffirent_feilds = async (req, res) => {
 
 export const signUpWithGmail = async (req, res) => {
     const { idToken } = req.body;
-    console.log(idToken);
 
     const client = new OAuth2Client();
     const ticket = await client.verifyIdToken({
@@ -493,7 +482,6 @@ export const getMyProfile = async (req, res) => {
     const key = profile_key({ userId: req.user.id });
     const user_exist = await redisService.get(key);
     if (user_exist) {
-        console.log("from cach");
         return success.success_response({ res, data: user_exist });
     }
     await redisService.set({

@@ -10,7 +10,6 @@ export const multer_local = ({folder_path="general", file_type = []}) => {
 
   const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      console.log("filter",file);
       cb(null, full_path);
     },
     filename: function (req, file, cb) {
@@ -20,7 +19,6 @@ export const multer_local = ({folder_path="general", file_type = []}) => {
   });
 
   function fileFilter (req, file, cb) {
-    // console.log(file);
     
     if(!file_type.includes(file.mimetype)){
       return cb(new Error("Invalid File Type"))
@@ -37,8 +35,6 @@ export const multer_local = ({folder_path="general", file_type = []}) => {
 export const multer_host = ({file_type = []}) => {
   const storage = multer.diskStorage({});
   function fileFilter (req, file, cb) {
-    // console.log(file);
-    
     if(!file_type.includes(file.mimetype)){
       return cb(new Error("Invalid File Type"))
     }

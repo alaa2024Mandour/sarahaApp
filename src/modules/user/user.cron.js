@@ -9,7 +9,5 @@ cron.schedule('* * * * 0', async () => {
             confirmed: { $exists: false },
         }
     })
-
     console.log(users);
-    
 });

@@ -18,7 +18,6 @@ export const sendMessages = async (req,res,next)=>{
     const attachments_paths=[]
     if(req.files.length){
         for (const file of req.files) {
-        console.log("before sending messgaes_attachments to cloudinary");
             const {secure_url,public_id} = await cloudinary.uploader.upload(
                 file.path,
                 {
