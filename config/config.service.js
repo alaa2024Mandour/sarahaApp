@@ -15,6 +15,7 @@ dotenv.config({path:resolve(`config/${path_env[NODE_ENV]}`)})
 export const PORT = process.env.PORT
 export const SECRET_KEY = process.env.SECRET_KEY
 export const DB_URL = process.env.DB_URL
+export const ONLINE_DB_URL = process.env.ONLINE_DB_URL
 export const ACCESS_SECRET_KEY = process.env.ACCESS_SECRET_KEY
 export const REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY
 export const CLUDINARY_CLOUD_NAME = process.env.CLUDINARY_CLOUD_NAME

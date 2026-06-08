@@ -18,6 +18,7 @@ import { generateOTP, sendEmail } from "../../common/utils/email/send.email.js";
 import { eventEmitter } from "../../common/utils/email/email.events.js";
 import { emailTemplate } from "../../common/utils/email/email.template.js";
 import {EmailEnum} from "../../common/utils/email/emial.enum.js";
+import { Types } from "mongoose";
 
 export const revokedToken_key = ({ userId, jti }) => {
     return `revokedToken::${userId}::${jti}`;
