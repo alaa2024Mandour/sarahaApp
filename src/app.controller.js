@@ -27,12 +27,12 @@ const corsOptions = {
 
 const limiter = rateLimit({
     windowMs:60*2*1000,
-    limit:3,
+    limit:20,
     message:"too many requests try again after 5 minuts" ,
     statusCode:400,
-    handler:(req,res,next)=>{  // to handel your response & it override message and ststusCode ☝
-        return res.json({message:"try again later"})
-    },
+    // handler:(req,res,next)=>{  // to handel your response & it override message and ststusCode ☝
+    //     return res.json({message:"try again later"})
+    // },
     legacyHeaders:false // to hide rateLimit details from postman headers or any platform
 })
 const bootstrap = () => {

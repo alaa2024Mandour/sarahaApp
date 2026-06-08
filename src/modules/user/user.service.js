@@ -74,7 +74,7 @@ const sendEmailOTP = async ({email,subject}) => {
         await redisService.set({
             key: otp_key({ email, subject }),
             value: Hash({ plainText: OTP , saltRounds:12 }),
-            ttl: 60, //1m
+            ttl: 60*5, //5m
         });
     })
 }
@@ -126,13 +126,13 @@ export const signUp = async (req, res) => {
         await redisService.set({
             key: otp_key({ email, subject:EmailEnum.confirmeEmail }),
             value: Hash({ plainText: OTP , saltRounds:12 }),
-            ttl: 60, //1m
+            ttl: 60*5, //5m
         });
 
         await redisService.set({
             key: max_tries_otp({ email }),
             value:1,
-            ttl: 60*3, //3m // بياخد دقيقه وانا عطياله انه يحاول 3 مررات بس فا دا يبقي وقته مجمل الوقت  otpعلشان ال  
+            ttl: 60*5*3, //3m // بياخد دقيقه وانا عطياله انه يحاول 3 مررات بس فا دا يبقي وقته مجمل الوقت  otpعلشان ال  
         });
     })
     
@@ -156,7 +156,7 @@ export const confirmEmail = async (req, res) => {
         model: userModel,
         filter: {
             email,
-            confirmed: { $exists: false }, // make sure that this email dont have confirmed feild 
+            confirmed: { $ne: true }, // make sure that this email don't have confirmed field 
             provider: ProviderEnum.system,
         },
         update: { confirmed: true },
@@ -177,7 +177,7 @@ export const resendEmail = async (req, res) => {
         model: userModel,
         filter: {
             email,
-            confirmed: { $exists: false }, // make sure that this email dont have confirmed feild 
+            confirmed: { $ne: true }, // make sure that this email don't have confirmed field 
             provider: ProviderEnum.system,
         },
     });
@@ -197,17 +197,16 @@ export const forgotPassword = async (req, res) => {
         model: userModel,
         filter: {
             email,
-            confirmed: { $exists: true }, 
             provider: ProviderEnum.system,
         },
     });
     if (!user) {
-        throw new Error(" user not exist or already confirmed ");
+        throw new Error(" user not exist or you have an account with google ");
     }
 
     await sendEmailOTP({email,subject:EmailEnum.forgotPassword})
 
-    success.success_response({ res, mes: "forgotPassword otp sent successfully" });
+    return success.success_response({ res, mes: "forgotPassword otp sent successfully" });
 }
 
 export const resetPassword = async (req, res) => {
@@ -228,7 +227,6 @@ export const resetPassword = async (req, res) => {
         model:userModel,
         filter: {
             email,
-            confirmed: { $exists: true }, // make sure that this email dont have confirmed feild 
             provider: ProviderEnum.system,
         },
         update:{
@@ -366,10 +364,10 @@ export const signIn = async (req, res) => {
         model: userModel, 
         filter: { 
             email ,
-            confirmed: { $exists: true },
+            confirmed:true ,
         } });
     if (!user) {
-        throw new Error("email not exist you need to creat an acount", {
+        throw new Error("email not exist you need to create an account or you need to confirm your email", {
             cause: 404,
         });
     }
@@ -407,7 +405,7 @@ export const signIn = async (req, res) => {
             },
             secret_key: configService.ACCESS_SECRET_KEY,
             options: {
-                expiresIn: "15m", // this token will be expired after 1 hour
+                expiresIn: "24h", // this token will be expired after 1 hour
                 // noTimestamp:true, // remove initiate time the time token generate in it
                 //notBefore:60*60 ,// this token not be valid befor 1 hour
                 jwtid: randomID, // make the id for the access token like the refresh token to expire theme when the user logout
@@ -487,7 +485,7 @@ export const getMyProfile = async (req, res) => {
     await redisService.set({
         key: key,
         value: req.user,
-        ttl: 60,
+        ttl: 60*5,
     });
 
     return success.success_response({ res, data: req.user });

@@ -31,7 +31,7 @@ export const sendMessages = async (req,res,next)=>{
             const message_details = await dbService.create({
                 model:messageModel,
                 data:{
-                    // userId,
+                    userId,
                     content , 
                     attachments:attachments_paths
                 }

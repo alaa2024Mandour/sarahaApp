@@ -34,9 +34,9 @@ export const signUp_schema = {
     //     'any.required':"file is required"
     // }),
     
-    query:joi.object({
-        flag:joi.boolean().truthy("yes" , "y" , "1").falsy("no","n","0")
-    }).options({presence:"required"}), 
+    // query:joi.object({
+    //     flag:joi.boolean().truthy("yes" , "y" , "1").falsy("no","n","0")
+    // }).options({presence:"required"}), 
 }
 
 export const signIn_schema = {

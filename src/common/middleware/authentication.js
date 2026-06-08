@@ -2,7 +2,6 @@ import * as authService from "../utils/auth.service.js"
 import * as dbService from "../../DB/db.service.js"
 import userModel from "../../DB/models/user.model.js";
 import * as configService from "../../../config/config.service.js";
-import revokTokenModel from "../../DB/models/revokToken.model.js";
 import * as redisService from "../../DB/redis/redis.service.js";
 import { revokedToken_key } from "../../modules/user/user.service.js";
 
