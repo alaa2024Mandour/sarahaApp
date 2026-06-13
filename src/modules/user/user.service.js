@@ -337,7 +337,7 @@ export const signUpWithGmail = async (req, res) => {
         id: user._id,
         email: user.email,
       },
-      secret_key: SECRET_KEY,
+      secret_key: configService.ACCESS_SECRET_KEY,
 
       options: {
         expiresIn: "1day",
