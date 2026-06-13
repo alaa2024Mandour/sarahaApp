@@ -52,7 +52,7 @@ userRouter.post(
 );
 
 userRouter.get(
-  "/getProfile",
+  "/profile",
   authMiddleware,
   authorization([RoleEnum.user]),
   userScervice.getMyProfile,
