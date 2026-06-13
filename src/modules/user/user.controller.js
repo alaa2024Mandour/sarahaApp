@@ -68,7 +68,7 @@ userRouter.get("/all", authMiddleware, async (req, res) => {
 });
 
 userRouter.get(
-  "/:id",
+  "/getUser/:id",
   authMiddleware,
   authorization([RoleEnum.user]),
   userScervice.getProfile,
