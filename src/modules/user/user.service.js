@@ -482,50 +482,19 @@ export const refreshToken = async (req, res) => {
   success.success_response({ res, data: { access_token } });
 };
 
-// export const getMyProfile = async (req, res) => {
-//     const key = profile_key({ userId: req.user.id });
-//     const user_exist = await redisService.get(key);
-//     if (user_exist) {
-//         return success.success_response({ res, data: user_exist });
-//     }
-//     await redisService.set({
-//         key: key,
-//         value: req.user,
-//         ttl: 60*5,
-//     });
-
-//     return success.success_response({ res, data: req.user });
-// };
-
 export const getMyProfile = async (req, res) => {
   const key = profile_key({ userId: req.user.id });
-
   const user_exist = await redisService.get(key);
   if (user_exist) {
     return success.success_response({ res, data: user_exist });
   }
-
-  // ✅ جيب من الـ DB مش من الـ token
-  let user = await dbService.findById({
-    model: userModel,
-    id: req.user.id,
-    select: "-password",
-  });
-
-  if (!user) throw new Error("user not found");
-
-  const userData = user.toObject();
-  if (userData.phone) {
-    userData.phone = decrypt(userData.phone);
-  }
-
   await redisService.set({
     key: key,
-    value: user,
+    value: req.user,
     ttl: 60 * 5,
   });
 
-  return success.success_response({ res, data: userData });
+  return success.success_response({ res, data: req.user });
 };
 
 export const getProfile = async (req, res) => {
