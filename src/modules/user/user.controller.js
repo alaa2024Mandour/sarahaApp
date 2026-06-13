@@ -52,20 +52,11 @@ userRouter.post(
 );
 
 userRouter.get(
-  "/",
+  "/profile",
   authMiddleware,
   authorization([RoleEnum.user]),
   userScervice.getMyProfile,
 );
-
-userRouter.get("/all", authMiddleware, async (req, res) => {
-  const users = await dbService.find({
-    model: userModel,
-    filter: { confirmed: true },
-    select: "_id userName first_name last_name profilePic gender",
-  });
-  return success.success_response({ res, data: users });
-});
 
 userRouter.get(
   "/getUser/:id",
