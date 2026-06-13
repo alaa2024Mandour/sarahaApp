@@ -490,13 +490,19 @@ export const getMyProfile = async (req, res) => {
   if (user_exist) {
     return success.success_response({ res, data: user_exist });
   }
+
+  const userData = user.toObject();
+  if (userData.phone) {
+    userData.phone = decrypt(userData.phone);
+  }
+
   await redisService.set({
     key: key,
     value: req.user,
     ttl: 60 * 5,
   });
 
-  return success.success_response({ res, data: req.user });
+  return success.success_response({ res, data: userData });
 };
 
 export const getProfile = async (req, res) => {
