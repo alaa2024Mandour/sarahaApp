@@ -83,21 +83,23 @@ const sendEmailOTP = async ({ email, subject }) => {
 };
 
 export const signUp = async (req, res) => {
+  let secure_url;
+  let public_id;
   if (req.file) {
-    const { secure_url, public_id } = await cloudinary.uploader.upload(
-      req.file.path,
-      {
-        folder: "sarahaApp/users/profile_pic",
-        resource_type: "image", // default value it is an image
-        // public_id:"ahmed",  // if you want to control file name
-        // unique_filename:true  // by default true
-      },
-    );
+    const uploadedPic = await cloudinary.uploader.upload(req.file.path, {
+      folder: "sarahaApp/users/profile_pic",
+      resource_type: "image", // default value it is an image
+      // public_id:"ahmed",  // if you want to control file name
+      // unique_filename:true  // by default true
+    });
+
+    secure_url = uploadedPic.secure_url;
+    public_id = uploadedPic.public_id;
   }
 
   const { userName, email, password, cPassowrd, gender, phone } = req.body;
   if (await dbService.findOne({ model: userModel, filter: { email } })) {
-    // await cloudinary.uploader.destroy(public_id); // if user exist don't upload profile_pic again
+    await cloudinary.uploader.destroy(public_id); // if user exist don't upload profile_pic again
     throw new Error("email aready exist", { cause: 400 });
   }
 
