@@ -52,7 +52,7 @@ userRouter.post(
 );
 
 userRouter.get(
-  "/",
+  "/getProfile",
   authMiddleware,
   authorization([RoleEnum.user]),
   userScervice.getMyProfile,
@@ -62,7 +62,7 @@ userRouter.get(
   "/:id",
   authMiddleware,
   authorization([RoleEnum.user]),
-  userScervice.getUserProfile,
+  userScervice.getProfile,
 );
 
 userRouter.post("/refreshToken", userScervice.refreshToken);
