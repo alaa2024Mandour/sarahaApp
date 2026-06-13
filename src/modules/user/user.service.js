@@ -491,7 +491,7 @@ export const getMyProfile = async (req, res) => {
     return success.success_response({ res, data: user_exist });
   }
 
-  const userData = user.toObject();
+  const userData = user_exist.toObject();
   if (userData.phone) {
     userData.phone = decrypt(userData.phone);
   }
