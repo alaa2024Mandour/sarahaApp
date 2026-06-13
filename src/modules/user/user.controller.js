@@ -58,6 +58,15 @@ userRouter.get(
   userScervice.getMyProfile,
 );
 
+userRouter.get("/all", authMiddleware, async (req, res) => {
+  const users = await dbService.find({
+    model: userModel,
+    filter: { confirmed: true },
+    select: "_id userName first_name last_name profilePic gender",
+  });
+  return success.success_response({ res, data: users });
+});
+
 userRouter.get(
   "/:id",
   authMiddleware,
@@ -112,14 +121,5 @@ userRouter.post(
   validationMid({ schema: userValidation.resendEmial_schema }),
   userScervice.resendEmail,
 );
-
-userRouter.get("/all", authMiddleware, async (req, res) => {
-  const users = await dbService.find({
-    model: userModel,
-    filter: { confirmed: true },
-    select: "_id userName first_name last_name profilePic gender",
-  });
-  return success.success_response({ res, data: users });
-});
 
 export default userRouter;
