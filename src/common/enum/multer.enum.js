@@ -1,5 +1,5 @@
 export const MimeEnum = {
-  images: ["image/jpeg", "image/png", "image/jpg", "image/jfif"],
+  images: ["image/jpeg", "image/png", "image/jpg", "image/jfif",  "image/pjpeg"],
   videos: ["video/mp4"],
   docs: [
     "application/pdf",
